@@ -10,6 +10,12 @@
 ![Responsive](https://img.shields.io/badge/UI-Responsive-success)
 ![Security](https://img.shields.io/badge/Security-JWT%20Protected-brightgreen)
 
+## 🖥️ Console Preview
+![ByteShield Dashboard](./screenshots/dashboard.png)
+
+---
+
+# 📌 Overview
 ---
 
 # 📌 Overview
@@ -38,6 +44,9 @@ Built entirely using **Vanilla JavaScript**, **HTML5**, and **CSS3**, the projec
 - Protected dashboard access using client-side state validation
 - Automatic session validation and token lifecycle management
 - Secure browser-side authentication handling
+
+### 🔑 Authentication Interface
+![ByteShield Login Screen](./screenshots/index.png)
 
 ### Route Protection
 
@@ -90,6 +99,7 @@ The backend stores only the SHA3-256 hash representation of the key, meaning the
 ## 📊 Traffic Analytics Dashboard
 
 ### Live Telemetry
+![ByteShield Analytics Chart](./screenshots/chart.png)
 
 - Total Request Counts
 - Average Response Time
