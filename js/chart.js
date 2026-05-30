@@ -11,7 +11,7 @@ async function load_pure_html_chart() {
         return;
     }
     try {
-        let response = await fetch('http://127.0.0.1:8000/api/v1/dashboard/metrics/', {
+        let response = await fetch('https://byteshield-gateway-backend.onrender.com/api/v1/dashboard/metrics/', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -43,7 +43,7 @@ async function load_pure_html_chart() {
         } else if (response.status === 401) {
             chartBox.innerHTML = '<p style="color:#ef4444; text-align:center; width:100%; font-size:14px;">Session expired. Re-authenticating...</p>';
             alert('Session Expired. Please login again.');
-            window.location.href = 'login.html';
+            window.location.href = 'index.html';
         } else {
             chartBox.innerHTML = `<p style="color:#ef4444; text-align:center; width:100%; font-size:14px;">Analytics Error: ${data.detail || 'Failed to sync telemetry timeline stream.'}</p>`;
         }

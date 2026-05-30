@@ -10,7 +10,7 @@ async function signup(e){
         for (let key of new FormData(myform).keys()){
             document.getElementById(`error-signup-${key}`).innerText='';
         }
-        let response=await fetch('http://127.0.0.1:8000/api/v1/auth/signup/',{
+        let response=await fetch('https://byteshield-gateway-backend.onrender.com/api/v1/auth/signup/',{
             'method':'POST',
             'headers':{
                 'Content-Type':'application/json',
@@ -61,7 +61,7 @@ async function login_user(e){
         document.getElementById('username-password-incorrect-error').innerText='';
         mybutton.disabled = true;
         mybutton.classList.add('loading');
-        let response=await fetch('http://127.0.0.1:8000/api/v1/auth/login/',{
+        let response=await fetch('https://byteshield-gateway-backend.onrender.com/api/v1/auth/login/',{
             'method':'POST',
             'headers':{
                 'Content-Type':'application/json',
@@ -111,7 +111,7 @@ async function logout(){
     localStorage.removeItem('access_token')
     localStorage.removeItem('refresh_token')
     localStorage.removeItem('current_page'); 
-    window.location.href='login.html';
+    window.location.href='index.html';
 }
 
 

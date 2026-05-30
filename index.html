@@ -263,6 +263,14 @@
     </div>
 </body>
 <script>
+    function CheckIfAlreadyLoggin(){
+    let token=localStorage.getItem('access_token')
+    let refresh_token=localStorage.getItem('refresh_token')
+    if (token || refresh_token){
+        window.location.href='dashboard.html'
+    }
+}
+CheckIfAlreadyLoggin();
     document.getElementById('login-form').addEventListener('submit', login_user);
 </script>
 </html>

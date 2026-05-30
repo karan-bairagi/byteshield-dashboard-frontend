@@ -5,7 +5,7 @@ async function home() {
     if (techError) techError.innerText = '';
     if (noDataEl) noDataEl.innerText = '';
     try {
-        let data = await security_fetch('http://127.0.0.1:8000/api/v1/user/profile/', {'method':'GET'});
+        let data = await security_fetch('https://byteshield-gateway-backend.onrender.com/api/v1/user/profile/', {'method':'GET'});
         if (!data) return;
         document.getElementById('count').innerText = data.count !== undefined ? data.count : "0";
         document.getElementById('average').innerText = data.avg?.average !== undefined && data.avg?.average !== null ? data.avg.average.toFixed(2) : "0.00";
@@ -37,7 +37,7 @@ async function generate_api_key(e) {
     if (!key_name_input) return;
     let key_name = key_name_input.value;
     try {
-        let data = await security_fetch('http://127.0.0.1:8000/api/v1/api-keys/', {
+        let data = await security_fetch('https://byteshield-gateway-backend.onrender.com/api/v1/api-keys/', {
             'method': 'POST',
             body: JSON.stringify({ "key_name": key_name })
         });
@@ -68,7 +68,7 @@ async function generate_api_key(e) {
 async function inactive(e, key_id) {
     e.preventDefault();
     try {
-        let data = await security_fetch(`http://127.0.0.1:8000/api/v1/api_key/inactive/?key_id=${key_id}`, {
+        let data = await security_fetch(`https://byteshield-gateway-backend.onrender.com/api/v1/api_key/inactive/?key_id=${key_id}`, {
             'method': 'PATCH',
         });
         if (!data) return;
@@ -98,7 +98,7 @@ async function allapikey() {
     if (noKeysEl) noKeysEl.innerText = '';
     if (techErrKeys) techErrKeys.innerText = '';
     try {
-        let data = await security_fetch('http://127.0.0.1:8000/api/v1/api_key/all/', {
+        let data = await security_fetch('https://byteshield-gateway-backend.onrender.com/api/v1/api_key/all/', {
             'method': 'GET'
         });
         if (!data) return;
@@ -140,7 +140,7 @@ async function allapikey() {
 async function delete_key(e, key_id) {
     if (!confirm("Are you sure you want to permanently delete this key?")) return;
     try {
-        let data = await security_fetch(`http://127.0.0.1:8000/api/v1/api_key/delete/?key_id=${key_id}`, {
+        let data = await security_fetch(`https://byteshield-gateway-backend.onrender.com/api/v1/api_key/delete/?key_id=${key_id}`, {
             'method': 'DELETE',
         });
         if (!data) return;
@@ -165,7 +165,7 @@ async function company_name(e) {
     if (!current_name_input) return;
     if (errCompany) errCompany.innerText = ''; 
     try {
-        let data = await security_fetch('http://127.0.0.1:8000/api/v1/dashboard/charts/', {
+        let data = await security_fetch('https://byteshield-gateway-backend.onrender.com/api/v1/dashboard/charts/', {
             'method': 'PATCH',
             body: JSON.stringify({ 'company_name': current_name_input.value })
         });
@@ -191,7 +191,7 @@ async function load_company_name() {
     let current_name_input = document.getElementById('current_name');
     if (!current_name_input) return;
     try {
-        let data = await security_fetch('http://127.0.0.1:8000/api/v1/dashboard/charts/', {
+        let data = await security_fetch('https://byteshield-gateway-backend.onrender.com/api/v1/dashboard/charts/', {
             'method': 'GET',
         });
         if (data && data.current_name) {

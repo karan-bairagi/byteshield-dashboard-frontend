@@ -2,7 +2,7 @@ async function security_fetch(url, options = {}) {
     let error_display = document.getElementById('Technical-error');
     let token = localStorage.getItem('access_token');
     if (!token) {
-        window.location.href = 'login.html';
+        window.location.href = 'index.html';
         return;
     }
     if (!options.headers) {
@@ -19,7 +19,7 @@ async function security_fetch(url, options = {}) {
         if (response.status == 401) {
             let data = await response.json();
             let refresh_token = localStorage.getItem('refresh_token');
-            let refresh_response = await fetch('http://127.0.0.1:8000/api/v1/auth/token/refresh/', {
+            let refresh_response = await fetch('https://byteshield-gateway-backend.onrender.com/api/v1/auth/token/refresh/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 'refresh': refresh_token })
@@ -35,7 +35,7 @@ async function security_fetch(url, options = {}) {
                     return await retry_response.json();
                 }
             } else {
-                window.location.href = 'login.html';
+                window.location.href = 'index.html';
                 return;
             }
         }
