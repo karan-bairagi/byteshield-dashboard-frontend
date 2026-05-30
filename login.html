@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ByteShield - Gateway Login</title>
+    <script src="js/auth.js"></script>
+    <style>
+        .loading-btn {
+            position: relative;
+            padding: 12px 24px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            }
+        .spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin-top: -10px; 
+            margin-left: -10px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        @keyframes spin {
+        to { transform: rotate(360deg); }
+        }
+        .loading-btn.loading {
+        color: transparent; 
+        pointer-events: none; 
+        }
+
+        .loading-btn.loading .spinner {
+        opacity: 1;
+        animation: spin 0.8s linear infinite;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        :root {
+            --bg-color: #0b0f19;
+            --surface-color: #1e293b;
+            --accent-color: #38bdf8;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --danger: #ef4444;
+            --success: #10b981;
+            --border-color: #334155
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .login-container {
+            width: 100%;
+            max-width: 420px;
+            background-color: var(--surface-color);
+            padding: 40px 30px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+        .brand-header {
+            margin-bottom: 35px;
+        }
+        .brand-logo {
+            font-size: 32px;
+            margin-bottom: 8px;
+            display: inline-block;
+            filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.3));
+        }
+        .brand-title {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: 0.5px;
+        }
+        .brand-title span {
+            color: var(--accent-color);
+        }
+        .brand-tagline {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 5px;
+            font-weight: 500;
+        }
+        .floating-group {
+            position: relative;
+            margin-bottom: 6px;
+            text-align: left;
+        }
+        .floating-group input {
+            width: 100%;
+            padding: 16px 14px 10px 14px;
+            background-color: #0f172a;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            outline: none;
+            font-size: 15px;
+            transition: all 0.2s ease-in-out;
+        }
+        .floating-group label {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 14px;
+            pointer-events: none;
+            transition: all 0.2s ease-in-out;
+            background-color: transparent;
+        }
+        .floating-group input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
+        }
+        .floating-group input:focus ~ label,
+        .floating-group input:not(:placeholder-shown) ~ label {
+            top: 12px;
+            font-size: 11px;
+            color: var(--accent-color);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .floating-group input:not(:placeholder-shown) {
+            padding-top: 20px;
+            padding-bottom: 6px;
+        }
+        .floating-group input:focus {
+            padding-top: 20px;
+            padding-bottom: 6px;
+        }
+        .error-text {
+            font-size: 12px;
+            color: var(--danger);
+            display: block;
+            margin-top: 4px;
+            margin-bottom: 15px;
+            text-align: left;
+            font-weight: 500;
+            min-height: 15px;
+        }
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #0284c7, #0369a1);
+            color: var(--text-main);
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+        .btn-submit:hover {
+            background: linear-gradient(135deg, var(--accent-color), #0284c7);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+            transform: translateY(-1px);
+        }
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .global-error {
+            color: var(--danger);
+            background-color: rgba(239, 68, 68, 0.1);
+            border: 1px dashed var(--danger);
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            margin-top: 15px;
+        }
+        .global-error:empty { display: none; }
+        .global-success {
+            color: var(--success);
+            background-color: rgba(16, 185, 129, 0.1);
+            border: 1px dashed var(--success);
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            margin-top: 15px;
+        }
+        .global-success:empty { display: none; }
+        .footer-link-wrapper {
+            margin-top: 25px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+        .footer-link-wrapper a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+        .footer-link-wrapper a:hover {
+            color: #7dd3fc;
+            text-decoration: underline;
+        }
+        @media (max-width: 480px) {
+            body { padding: 15px; }
+            .login-container { padding: 30px 20px; }
+            .brand-title { font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="brand-header">
+            <div class="brand-logo">🛡️</div>
+            <h1 class="brand-title">Byte<span>Shield</span></h1>
+            <p class="brand-tagline">API Security & Analytics Gateway</p>
+        </div>
+        <form id="login-form" novalidate>
+            <div class="floating-group">
+                <input type="text" name="username" id="input-username" placeholder=" " required autocomplete="off">
+                <label for="input-username">Username</label>
+            </div>
+            <span class="error-text" id="login-error-username"></span>
+            <div class="floating-group">
+                <input type="password" name="password" id="input-password" placeholder=" " required>
+                <label for="input-password">Password</label>
+            </div>
+            <span class="error-text" id="login-error-password"></span>
+            <!-- Is button ko apne form me replace kar lijiye -->
+            <button type="submit" id="login-button" class="btn-submit loading-btn">
+                <span class="btn-text">Connect to Gateway</span>
+                <span class="spinner"></span>
+            </button>
+
+        </form>
+        <div class="global-error" id="username-password-incorrect-error"></div>
+        <div class="global-success" id="login-success"></div>
+        <p class="footer-link-wrapper">
+            Don't have an account? <a href="signup.html">Create Console Account</a>
+        </p>
+    </div>
+</body>
+<script>
+    document.getElementById('login-form').addEventListener('submit', login_user);
+</script>
+</html>

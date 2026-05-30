@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ByteShield Traffic Analytics</title>
+    <script src="js/dashboard.js" defer></script>
+    <script src="js/auth.js" defer></script>
+    <script src="js/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+        }
+        :root {
+            --bg-color: #0f172a;  
+            --surface-color: #1e293b;
+            --accent-color: #38bdf8;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155; 
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .chart-container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--surface-color);
+            padding: 35px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.4);
+        }
+        .chart-title {
+            color: var(--accent-color);
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+        .chart-desc {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 35px;
+        }
+        .chart-scroll-area {
+            width: 100%;
+            overflow-x: auto;
+            margin-bottom: 25px;
+            border-radius: 8px;
+        }
+        .pure-css-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 350px;
+            width: 100%;
+            min-width: 700px;
+            border-bottom: 2px solid var(--border-color);
+            border-left: 2px solid var(--border-color);
+            padding: 15px 10px 0 10px;
+            position: relative;
+            background-image: linear-gradient(rgba(51, 65, 85, 0.3) 1px, transparent 1px);
+            background-size: 100% 50px;
+        }
+        .bar-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-grow: 1;
+            max-width: 65px;
+            height: 100%;
+            justify-content: flex-end;
+        }
+        .bar {
+            width: 65%;
+            background: linear-gradient(to top, #0284c7, var(--accent-color));
+            border-radius: 6px 6px 0 0;
+            transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            cursor: pointer;
+        }
+        .bar:hover {
+            background: linear-gradient(to top, #0369a1, #7dd3fc);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
+        }
+        .bar-hits {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent-color);
+            margin-bottom: 6px;
+        }
+        .bar-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 10px;
+            white-space: nowrap;
+            font-weight: 500;
+        }
+        .controls-footer {
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+        .back-btn {
+            padding: 10px 24px;
+            background-color: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s ease-in-out;
+            white-space: nowrap;
+        }
+        .back-btn:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: var(--text-main);
+        }
+        .system-status-text {
+            font-size: 12px; 
+            color: var(--text-muted);
+            text-align: right;
+        }
+        .spinner-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            gap: 15px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: var(--surface-color);
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(56, 189, 248, 0.1);
+            border-top: 4px solid var(--accent-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .loading-text {
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 500;
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .chart-container {
+                padding: 20px;
+                border-radius: 12px;
+            }
+            .chart-title {
+                font-size: 20px;
+            }
+            .chart-desc {
+                font-size: 13px;
+                margin-bottom: 25px;
+            }
+            .pure-css-chart {
+                height: 260px; 
+                min-width: 100%;
+                padding: 10px 5px 0 5px;
+            }
+            .bar-wrapper {
+                max-width: 45px;
+            }
+            .bar-hits {
+                font-size: 10px;
+                margin-bottom: 3px;
+            }
+            .bar-label {
+                font-size: 9px;
+                margin-top: 6px;
+            }
+            .controls-footer {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+                gap: 12px;
+            }
+            .back-btn {
+                width: 100%; 
+                padding: 12px;
+            }
+            .system-status-text {
+                text-align: center;
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chart-container">
+        <h2 class="chart-title">📈 ByteShield Live Traffic Analytics</h2>
+        <p class="chart-desc">Real-time metrics timeline distribution breakdown over the past 24 hours.</p>
+        <div class="chart-scroll-area">
+            <div id="html-chart-box" class="pure-css-chart">
+                <div class="spinner-wrapper" id="chart-loader">
+                    <div class="spinner"></div>
+                    <p class="loading-text">Syncing telemetry data streams...</p>
+                </div>
+            </div>
+        </div>
+        <div class="controls-footer">
+            <button class="back-btn" onclick="goToDashboard()">⬅️ Back to Console</button>
+            <span class="system-status-text">System Status: Secure</span>
+        </div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            let token = localStorage.getItem('access_token');
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+            load_pure_html_chart();
+        };
+        function goToDashboard() {
+            window.location.href = 'dashboard.html';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ByteShield - Register Console</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="js/auth.js"></script>
+    <style>
+        .loading-btn {
+        position: relative;
+        padding: 12px 24px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        }
+        .spinner {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 20px;
+        height: 20px;
+        margin-top: -10px; 
+        margin-left: -10px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        }
+        @keyframes spin {
+        to { transform: rotate(360deg); }
+        }
+        .loading-btn.loading {
+        color: transparent; 
+        pointer-events: none;
+        }
+        .loading-btn.loading .spinner {
+        opacity: 1;
+        animation: spin 0.8s linear infinite;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .branding-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .branding-header i {
+            font-size: 2.5rem;
+            color: #3b82f6;
+            text-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+            margin-bottom: 8px;
+        }
+        .branding-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #ffffff;
+        }
+        .signup-container {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 32px;
+            width: 100%;
+            max-width: 460px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .error-toast {
+            background-color: rgba(239, 68, 68, 0.15);
+            border-left: 4px solid #ef4444;
+            color: #fca5a5;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease; 
+        }
+        .field-error {
+            color: #ef4444;
+            font-size: 0.8rem;
+            margin-top: 4px;
+            margin-left: 40px;
+            display: block;
+        }
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .input-wrapper i {
+            position: absolute;
+            left: 14px;
+            color: #64748b;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+        }
+        .input-wrapper input {
+            width: 100%;
+            padding: 14px 14px 14px 42px;
+            background-color: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #f8fafc;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        .input-wrapper input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.3);
+        }
+        .input-wrapper input:focus + i {
+            color: #3b82f6;
+        }
+        .password-policies {
+            background-color: #0f172a;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: -10px;
+            margin-bottom: 20px;
+            border: 1px solid #232e42;
+        }
+        .policy-item {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+            transition: all 0.3s ease;
+        }
+        .policy-item:last-child {
+            margin-bottom: 0;
+        }
+        .policy-item i {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+        .policy-item.valid {
+            color: #10b981;
+        }
+        .policy-item.valid i {
+            color: #10b981;
+        }
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        }
+        .btn-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+        }
+        .btn-submit:active {
+            transform: translateY(1px);
+        }
+        .btn-submit.loading {
+            background: #334155;
+            color: #94a3b8;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        .success-message {
+            color: #10b981;
+            background-color: rgba(16, 185, 129, 0.1);
+            border: 1px solid #10b981;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.95rem;
+            margin-top: 15px;
+        }
+        .footer-link {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+        .footer-link a {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+        .footer-link a:hover {
+            color: #60a5fa;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="branding-header">
+        <i class="fa-solid fa-shield-halved"></i>
+        <h1>ByteShield</h1>
+    </div>
+    <div class="signup-container">
+        <form id="signup-form" novalidate>
+            <div class="input-group">
+                <div class="input-wrapper">
+                    <input type="text" name="username" placeholder="Enter Your Username">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <span id="error-signup-username" class="field-error"></span>
+            </div>
+            <div class="input-group">
+                <div class="input-wrapper">
+                    <input type="email" name="email" placeholder="Enter Your Email">
+                    <i class="fa-solid fa-envelope"></i>
+                </div>
+                <span id="error-signup-email" class="field-error"></span>
+            </div>
+            <div class="input-group">
+                <div class="input-wrapper">
+                    <input type="password" name="password" id="signup-password" placeholder="Enter Strong Password">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <span id="error-signup-password" class="field-error"></span>
+            </div>
+            <div class="password-policies">
+                <div class="policy-item" id="rule-length">
+                    <i class="fa-solid fa-circle-notch"></i> At least 8 characters
+                </div>
+                <div class="policy-item" id="rule-upper">
+                    <i class="fa-solid fa-circle-notch"></i> At least 1 uppercase letter (A-Z)
+                </div>
+                <div class="policy-item" id="rule-lower">
+                    <i class="fa-solid fa-circle-notch"></i> At least 1 lowercase letter (a-z)
+                </div>
+                <div class="policy-item" id="rule-digit">
+                    <i class="fa-solid fa-circle-notch"></i> At least 1 number (0-9)
+                </div>
+                <div class="policy-item" id="rule-special">
+                    <i class="fa-solid fa-circle-notch"></i> At least 1 special character (@, $, !, etc.)
+                </div>
+            </div>
+           <button type="submit" id="signup-button" class="btn-submit loading-btn">
+            <span class="btn-text">Create Secure Account</span>
+            <span class="spinner"></span>
+        </button>
+        </form>
+        <div id="success" class="success-message" style="display: none;"></div>
+        <div class="footer-link">
+            Already have an account? <a href="login.html">Login</a>
+        </div>
+    </div>
+    <script>
+        document.getElementById('signup-form').addEventListener('submit', signup);
+    </script>
+</body>
+</html>

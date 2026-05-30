@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ByteShield - Cloud Console</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="js/dashboard.js"></script>
+    <script src="js/auth.js"></script>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <script src="js/chart.js"></script>
+    <script src="js/security.js"></script>
+</head>
+<body>
+    <div class="dashboard-wrapper">  
+        <aside class="sidebar-container">
+            <div class="sidebar-brand">
+                <i class="fa-solid fa-shield-halved"></i>
+                <h2>ByteShield</h2>
+            </div>
+            <nav class="sidebar-links">
+                <button class="nav-item-btn active" onclick="showform('dashboard')">
+                    <i class="fa-solid fa-chart-pie"></i> <text>Overview</text>
+                </button>
+                <button class="nav-item-btn" onclick="showform('all_data')">
+                    <i class="fa-solid fa-key"></i> <text>Your API Keys</text>
+                </button>
+                <button class="nav-item-btn" onclick="showform('company_name')">
+                    <i class="fa-solid fa-sliders"></i> <text>Company Settings</text>
+                </button>
+                <button class="nav-item-btn chart-link-item">
+                    <a href="chart.html"><i class="fa-solid fa-chart-line"></i> <text>Analytics Chart</text></a>
+                </button>
+            </nav>
+            <button class="sidebar-logout-btn" onclick="logout()">
+                <i class="fa-solid fa-power-off"></i> <text>Logout</text>
+            </button>
+        </aside>
+        <main class="content-panel-workspace">
+            <div class="header-container">
+                <div class="welcome-user-identity">
+                    <i class="fa-solid fa-circle-user profile-avatar"></i>
+                    <h2 id="here_username">Welcome</h2>
+                </div>
+                <div class="live-deployment-badge">
+                    <span class="pulse-live-dot"></span> Network Engine Live
+                </div>
+            </div>
+            <div id="dashboard-div" class="view-panel-card">
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <span class="card-icon">📊</span>
+                        <div class="metric-info">
+                            <p class="metric-label">Total Website Requests</p>
+                            <h3 id="count">0</h3>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <span class="card-icon">⚡</span>
+                        <div class="metric-info">
+                            <p class="metric-label">Average Server Speed</p>
+                            <h3><span id="average">0.00</span> <small>ms</small></h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-card status-breakdown-wrapper">
+                    <h3><i class="fa-solid fa-list-check"></i> Response Status Breakdown</h3>
+                    <div id="status_group"></div>
+                    <p id="no-data-availabel" class="info-msg"></p>
+                    <h1 id="Technical-error" class="error-msg"></h1>
+                </div>
+
+                <div class="action-bar">
+                    <button class="primary-btn" onclick="showform('generate_api')"><i class="fa-solid fa-plus"></i> Generate New API Key</button>
+                    <button class="secondary-btn" onclick="showform('all_data')"><i class="fa-solid fa-folder-open"></i> Your API Keys</button>
+                    <button class="secondary-btn" onclick="showform('company_name')"><i class="fa-solid fa-gears"></i> Company Settings</button>
+                </div>
+            </div>
+
+            <div id="generate-key-div" class="view-panel-card central-form-box" hidden>
+                <h2>🔑 Credentials Generator</h2>
+                <p class="subtitle-text">Create a safe cryptographic access token for your microservices.</p>
+                
+                <form novalidate id="form-api-key" class="vertical-panel-form">
+                    <div class="input-group">
+                        <label class="custom-field-label">Key Identifier Name</label>
+                        <input type="text" name="key_name" placeholder="Enter Key Name (e.g., Production_Server)" id="name_key" class="modern-field-input">
+                        <span id="error-key_name" class="validation-error"></span>
+                    </div>
+
+                    <div id="copy-wrapper" class="copy-box-wrapper" style="display: none;">
+                        <div class="key-input-field-container">
+                            <input type="text" readonly id="api_key" class="mono-font modern-field-input generated-token-input">
+                            <button type="button" id="copy-action-btn" class="copy-action-trigger-btn" onclick="copyKeyToClipboard()">
+                                <i class="fa-regular fa-copy"></i> Copy Key
+                            </button>
+                        </div>
+                        <small class="security-warning-lbl"><i class="fa-solid fa-triangle-exclamation"></i> Make sure to copy this credential now. You won't be able to retrieve its plain signature again!</small>
+                    </div>
+
+                    <div class="form-submission-tray">
+                        <button type="submit" class="submit-btn"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate Secure API Key</button>
+                        <button type="button" class="back-btn" onclick="showform('dashboard')">↩ Back to Overview</button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="all_api_keys" class="view-panel-card" hidden>
+                <h2>📋 Registered Gateway Credentials</h2>
+                <div class="table-scroll-wrapper">
+                    <table class="modern-console-table">
+                        <thead>
+                            <tr>
+                                <th>API Key Name</th>
+                                <th>Status</th>
+                                <th>Generation Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="all_data"></tbody>
+                    </table>
+                </div>
+                <div class="table-response-messaging">
+                    <p id="success-active" class="success-msg"></p>
+                    <p style="color:#ef4444" id="no-keys" class="info-msg"></p>
+                    <p id="Technical-error-keys" class="error-msg"></p>
+                </div>
+                
+                <button class="back-btn" onclick="showform('dashboard')">↩ Back to Overview</button>
+            </div>
+
+            <div id="update-name" class="view-panel-card central-form-box" hidden>
+                <h2>⚙️ Organization Identity Settings</h2>
+                <p class="subtitle-text">Change the parent organization name mapped globally across active microservice nodes.</p>
+                
+                <form novalidate id="company-name" class="vertical-panel-form">
+                    <div class="input-group">
+                        <label class="custom-field-label">Organization Legal Scope Name</label>
+                        <input type="text" name="company_name" placeholder="Enter Company Name" id="current_name" class="modern-field-input">
+                        <span class="validation-error" id="error-company-name"></span>
+                    </div>
+                    <div class="form-submission-tray">
+                        <button type="submit" class="submit-btn"><i class="fa-solid fa-floppy-disk"></i> Save Deployment Configuration</button>
+                        <button type="button" class="back-btn" onclick="showform('dashboard')">Cancel Changes</button>
+                    </div>
+                </form>
+                <p id="success-update" class="success-msg"></p>
+            </div>
+
+        </main>
+    </div>
+
+</body>
+<script>
+    window.onload = function() {
+        security_fetch();
+        home();
+        allapikey();
+        load_company_name();
+        let lastpage = localStorage.getItem('current_page');
+        if(lastpage){
+            showform(lastpage);
+        } else {
+            showform('dashboard');
+        }
+        document.getElementById('form-api-key').addEventListener('submit', generate_api_key);
+        document.getElementById('company-name').addEventListener('submit', company_name);
+
+        setInterval(function() {
+            const targetInput = document.getElementById('api_key');
+            const copyWrapper = document.getElementById('copy-wrapper');
+            if (targetInput && targetInput.value.trim() !== "" && copyWrapper.style.display === 'none') {
+                targetInput.hidden = false;
+                copyWrapper.style.display = 'flex'; 
+            }
+        }, 300);
+    }
+
+    function copyKeyToClipboard() {
+        const keyEl = document.getElementById('api_key');
+        const copyBtn = document.getElementById('copy-action-btn');
+        if (!keyEl.value) return;
+        
+        navigator.clipboard.writeText(keyEl.value).then(() => {
+            copyBtn.innerHTML = "<i class='fa-solid fa-circle-check'></i> Copied! ✓";
+            copyBtn.style.backgroundColor = "#10b981";
+            copyBtn.style.borderColor = "#10b981";
+            setTimeout(() => {
+                copyBtn.innerHTML = "<i class='fa-regular fa-copy'></i> Copy Key";
+                copyBtn.style.backgroundColor = "#1f2937";
+                copyBtn.style.borderColor = "#374151";
+            }, 2000);
+        });
+    }
+
+    async function showform(page){
+        localStorage.setItem('current_page', page);
+        let dashboard = document.getElementById('dashboard-div');
+        let generate = document.getElementById('generate-key-div');
+        let all_api_keys = document.getElementById('all_api_keys');
+        let company_name = document.getElementById('update-name');
+        
+        dashboard.hidden = page !== 'dashboard';
+        generate.hidden = page !== 'generate_api';
+        all_api_keys.hidden = page !== 'all_data';
+        company_name.hidden = page !== 'company_name';
+
+        const navigationButtons = document.querySelectorAll('.nav-item-btn');
+        navigationButtons.forEach(btn => btn.classList.remove('active'));
+        if(page === 'dashboard') navigationButtons[0].classList.add('active');
+        if(page === 'all_data') navigationButtons[1].classList.add('active');
+        if(page === 'company_name') navigationButtons[2].classList.add('active');
+
+        if(page === 'generate_api') {
+            document.getElementById('api_key').value = "";
+            document.getElementById('copy-wrapper').style.display = 'none';
+            document.getElementById('name_key').value = "";
+            document.getElementById('error-key_name').innerText = "";
+        }
+    }
+</script>
+</html>
