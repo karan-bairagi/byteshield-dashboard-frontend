@@ -2,7 +2,7 @@
 
 > A Modern Cyber-Security Dashboard built with HTML5, CSS3, and Vanilla JavaScript for managing API Keys, monitoring traffic analytics, and interacting with the ByteShield Gateway.
 
-[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen?style=for-the-badge&logo=vercel)](https://byteshield-dashboard-frontend.vercel.app/)
+[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen?style=for-the-badge&logo=vercel)](https://byteshield-dashboard-frontend.vercel.app)
 
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white)
@@ -217,7 +217,7 @@ js/security.js
 
 ```javascript
 const API_BASE_URL =
-"https://byteshield-gateway-backend.onrender.com/";
+"https://byteshield-gateway-backend.onrender.com";
 ```
 
 ### Local Development
@@ -352,7 +352,7 @@ Auto-generated integration examples for:
 
 ## 🚀 Live Links
 
-- **Frontend Dashboard (Vercel):** [https://byteshield-frontend.vercel.app](https://byteshield-dashboard-frontend.vercel.app/)
+- **Frontend Dashboard (Vercel):** [https://byteshield-dashboard-frontend.vercel.app](https://byteshield-dashboard-frontend.vercel.app/)
 - **Backend API Gateway (Render):** [https://byteshield-gateway-backend.onrender.com](https://byteshield-gateway-backend.onrender.com)
 
 ---
