@@ -469,9 +469,11 @@ button {
         align-items: center;
         justify-content: space-between;
         z-index: 999;
+        gap: 10px;
     }
     .sidebar-brand {
         margin-bottom: 0;
+        flex-shrink: 0;
     }
     .sidebar-brand h2 {
         display: block !important;
@@ -481,20 +483,28 @@ button {
         flex-direction: row;
         gap: 6px;
         margin-left: auto;
-        margin-right: 10px;
+        margin-right: 4px;
         flex-grow: 0;
     }
     .nav-item-btn {
         padding: 10px 12px;
         width: auto;
     }
-    .nav-item-btn text, .sidebar-logout-btn text {
+    /* Fixed: Mobile me text ki jagah clean spacing set ki */
+    .nav-item-btn text {
         display: none !important; 
     }
     .sidebar-logout-btn {
-        padding: 10px 12px;
-        margin-top: 0;
-        width: auto;
+        padding: 10px 14px !important;
+        margin-top: 0 !important;
+        width: auto !important;
+        display: flex !important; /* Forces layout tracking on mobile */
+        visibility: visible !important;
+        opacity: 1 !important;
+        flex-shrink: 0 !important;
+        font-size: 0.85rem !important;
+        background: #f43f5e !important; /* Colored background for better visibility on small screens */
+        color: #ffffff !important;
     }
     
     .content-panel-workspace {
@@ -525,6 +535,7 @@ button {
     .table-scroll-wrapper {
         border: none;
         margin: 16px 0;
+        overflow-x: auto;
     }
     .modern-console-table {
         background: transparent;
